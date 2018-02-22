@@ -1,5 +1,4 @@
 import { call, put } from 'redux-saga/effects';
-
 import todosActions from 'actions/todos';
 import { api, token } from 'instruments/api';
 
@@ -16,7 +15,7 @@ export function* deleteTodoWorker ({ payload }) {
         });
 
         if (response.status !== 204) {
-            const { message } = yield call([response, response.json])
+            const { message } = yield call([response, response.json]);
 
             throw new Error(message);
         }
@@ -26,7 +25,7 @@ export function* deleteTodoWorker ({ payload }) {
     } catch (error) {
         yield put(todosActions.deleteTodoFail(error));
     } finally {
-
+        // finally
     }
 
-};
+}

@@ -2,10 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Map, fromJS, is } from 'immutable';
 // Instruments
 import Styles from './styles';
-import initialState from './todos';
 import Checkbox from 'theme/assets/Checkbox';
 import todosActions from 'actions/todos';
 import { getTodos } from 'selectors/todos';
@@ -21,7 +19,7 @@ class Scheduler extends Component {
             newTodo: '',
             search:  '',
         };
-        
+
         this.complete = this.complete.bind(this);
         this.changePriority = this.changePriority.bind(this);
         this.deleteTodo = this.deleteTodo.bind(this);
@@ -53,7 +51,7 @@ class Scheduler extends Component {
 
     changePriority (id) {
         const { todos, actions: { changePriority }} = this.props;
-    
+
         todos.map((todo) => {
             if (todo.id === id) {
                 changePriority([{
@@ -78,7 +76,6 @@ class Scheduler extends Component {
 
         completeAllTodos();
     }
-        
 
     handleSubmit = (event) => {
         event.preventDefault();
@@ -91,10 +88,10 @@ class Scheduler extends Component {
             this.setState({ newTodo: '' });
         }
     }
-        
+
     handleInputChange = (event) => {
         const newTodo = event.target.value || '';
-        
+
         if (newTodo.length <= 46) {
             this.setState({ newTodo });
         }
@@ -103,8 +100,8 @@ class Scheduler extends Component {
 
     handleSearchInputChange = (event) => {
         const search = event.target.value || '';
-        
-        this.setState({ search })
+
+        this.setState({ search });
     }
 
     handleSearchInputKeyPress = (event) => {
@@ -137,7 +134,7 @@ class Scheduler extends Component {
                 <main>
                     <header>
                         <h1>Планировщик задач</h1>
-                        <input 
+                        <input
                             placeholder = 'Поиск'
                             type = 'search'
                             value = { this.state.search }
@@ -181,6 +178,6 @@ const mapDispathToProps = (dispatch) => ({
     actions: bindActionCreators(
         { ...todosActions },
         dispatch),
-})
+});
 
 export default connect(mapStateToProps, mapDispathToProps)(Scheduler);

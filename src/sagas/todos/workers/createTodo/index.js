@@ -1,5 +1,4 @@
 import { call, put } from 'redux-saga/effects';
-
 import todosActions from 'actions/todos';
 import { api, token } from 'instruments/api';
 import { normalize } from 'normalizr';
@@ -31,7 +30,7 @@ export function* createTodoWorker ({ payload }) {
     } catch (error) {
         yield put(todosActions.createTodoFail(error));
     } finally {
-        
+        // finally
     }
 
 }

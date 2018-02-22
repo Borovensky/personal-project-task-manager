@@ -25,7 +25,7 @@ export default class Task extends Component {
     deleteTodo = () => {
         const { id, deleteTodo } = this.props;
 
-        deleteTodo(id)
+        deleteTodo(id);
     }
 
     render () {
@@ -56,9 +56,9 @@ export default class Task extends Component {
                         onClick = { this.changePriority }
                     />
                     <Edit color1 = '#3B8EF3' color2 = '#000' />
-                    <Delete 
-                        color1 = '#3B8EF3' 
-                        color2 = '#000' 
+                    <Delete
+                        color1 = '#3B8EF3'
+                        color2 = '#000'
                         onClick = { this.deleteTodo }
                     />
                 </div>

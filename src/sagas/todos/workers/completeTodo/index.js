@@ -1,5 +1,4 @@
 import { call, put } from 'redux-saga/effects';
-
 import todosActions from 'actions/todos';
 import { api, token } from 'instruments/api';
 import { normalize } from 'normalizr';
@@ -19,7 +18,7 @@ export function* completeTodoWorker ({ payload }) {
         });
 
         const { data, message } = yield call([response, response.json]);
-        
+
         if (response.status !== 200) {
             throw new Error(message);
         }
@@ -31,7 +30,7 @@ export function* completeTodoWorker ({ payload }) {
     } catch (error) {
         yield put(todosActions.completeTodoFail(error));
     } finally {
-
+        // finally
     }
 
-};
+}

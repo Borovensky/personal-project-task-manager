@@ -1,5 +1,5 @@
 import types from './types';
- 
+
 export default Object.freeze({
 
     // FetchTodos
@@ -10,7 +10,7 @@ export default Object.freeze({
     fetchTodosSuccess: (todos) => ({
         type:    types.FETCH_TODOS_SUCCESS,
         payload: todos,
-    }), 
+    }),
     fetchTodosFail: (error) => ({
         type:    types.FETCH_TODOS_FAIL,
         payload: error.message,

@@ -1,5 +1,4 @@
 import types from 'actions/todos/types';
-// import todos from 'components/Scheduler/todos'
 import { List, fromJS, is } from 'immutable';
 
 const initialState = List([]);
@@ -15,7 +14,7 @@ export default (state = initialState, action) => {
             return result;
         }
 
-        case types.CREATE_TODO_SUCCESS: 
+        case types.CREATE_TODO_SUCCESS:
             return state.unshift(action.payload.result);
 
         case types.COMPLETE_SUCCESS:
@@ -31,4 +30,4 @@ export default (state = initialState, action) => {
             return state;
     }
 
-}
+};
