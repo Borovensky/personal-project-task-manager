@@ -1,60 +1,132 @@
 // Core
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Map, fromJS, is } from 'immutable';
 // Instruments
 import Styles from './styles';
 import initialState from './todos';
 import Checkbox from 'theme/assets/Checkbox';
-
+import todosActions from 'actions/todos';
+import { getTodos } from 'selectors/todos';
 // Components
 import Task from 'components/Task';
 
-export default class Scheduler extends Component {
-    state = initialState;
+class Scheduler extends Component {
 
-    handleSubmit = (event) => event.preventDefault();
+    constructor (props) {
+        super(props);
 
-    complete = (id) =>
-        this.setState(({ todos }) => ({
-            todos: todos.map((todo) => {
-                if (todo.id === id) {
-                    todo.completed = !todo.completed;
-                }
+        this.state = {
+            newTodo: '',
+            search:  '',
+        };
+        
+        this.complete = this.complete.bind(this);
+        this.changePriority = this.changePriority.bind(this);
+        this.deleteTodo = this.deleteTodo.bind(this);
+        this.completeAll = this.completeAll.bind(this);
 
-                return todo;
-            }),
-        }));
+    }
 
-    changePriority = (id) =>
-        this.setState(({ todos }) => ({
-            todos: todos.map((todo) => {
-                if (todo.id === id) {
-                    todo.important = !todo.important;
-                }
+    componentDidMount () {
+        const { search } = this.state;
+        const { actions } = this.props;
 
-                return todo;
-            }),
-        }));
+        actions.fetchTodos(search);
+    }
 
-    completeAll = () =>
-        this.setState(({ todos }) => ({
-            todso: todos.map((todo) => {
-                todo.completed = true;
+    complete (id) {
+        const { todos, actions: { completeTodo }} = this.props;
 
-                return todo;
-            }),
-        }));
+        todos.map((todo) => {
+            if (todo.id === id) {
+                completeTodo([{
+                    id,
+                    message:   todo.message,
+                    completed: !todo.completed,
+                    favorite:  todo.favorite,
+                }]);
+            }
+        });
+    }
+
+    changePriority (id) {
+        const { todos, actions: { changePriority }} = this.props;
+    
+        todos.map((todo) => {
+            if (todo.id === id) {
+                changePriority([{
+                    id,
+                    message:   todo.message,
+                    completed: todo.completed,
+                    favorite:  !todo.favorite,
+                }]);
+            }
+        });
+
+    }
+
+    deleteTodo (id) {
+        const { actions: { deleteTodo }} = this.props;
+
+        deleteTodo(id);
+    }
+
+    completeAll () {
+        const { actions: { completeAllTodos }} = this.props;
+
+        completeAllTodos();
+    }
+        
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+
+        const { createTodo } = this.props.actions;
+        const { newTodo } = this.state;
+
+        if (newTodo.length !== 0) {
+            createTodo(newTodo);
+            this.setState({ newTodo: '' });
+        }
+    }
+        
+    handleInputChange = (event) => {
+        const newTodo = event.target.value || '';
+        
+        if (newTodo.length <= 46) {
+            this.setState({ newTodo });
+        }
+
+    }
+
+    handleSearchInputChange = (event) => {
+        const search = event.target.value || '';
+        
+        this.setState({ search })
+    }
+
+    handleSearchInputKeyPress = (event) => {
+        const { search } = this.state;
+        const { actions } = this.props;
+
+        if (event.key === 'Enter') {
+            actions.fetchTodos(search);
+        }
+    }
 
     render () {
-        const { todos } = this.state;
+        const { todos } = this.props;
         const allCompleted = todos.every((todo) => todo.completed);
-        const todoList = todos.map(({ id, message, completed, important }) => (
+        const todoList = todos.map(({ id, message, completed, favorite }) => (
             <Task
                 changePriority = { this.changePriority }
                 complete = { this.complete }
                 completed = { completed }
+                deleteTodo = { this.deleteTodo }
+                favorite = { favorite }
                 id = { id }
-                important = { important }
                 key = { id }
                 message = { message }
             />
@@ -65,11 +137,23 @@ export default class Scheduler extends Component {
                 <main>
                     <header>
                         <h1>Планировщик задач</h1>
-                        <input placeholder = 'Поиск' type = 'search' />
+                        <input 
+                            placeholder = 'Поиск'
+                            type = 'search'
+                            value = { this.state.search }
+                            onChange = { this.handleSearchInputChange }
+                            onKeyPress = { this.handleSearchInputKeyPress }
+                        />
                     </header>
                     <section>
                         <form onSubmit = { this.handleSubmit }>
-                            <input placeholder = 'Описание моей новой задачи' type = 'text' />
+                            <input
+                                placeholder = 'Описание моей новой задачи'
+                                // ref = { (ref) => this.input = ref }
+                                type = 'text'
+                                value = { this.state.newTodo }
+                                onChange = { this.handleInputChange }
+                            />
                             <button>Добавить задачу</button>
                         </form>
                         <ul>{todoList}</ul>
@@ -88,3 +172,15 @@ export default class Scheduler extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+    todos: getTodos(state),
+});
+
+const mapDispathToProps = (dispatch) => ({
+    actions: bindActionCreators(
+        { ...todosActions },
+        dispatch),
+})
+
+export default connect(mapStateToProps, mapDispathToProps)(Scheduler);

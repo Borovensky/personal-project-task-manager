@@ -22,8 +22,14 @@ export default class Task extends Component {
         changePriority(id);
     };
 
+    deleteTodo = () => {
+        const { id, deleteTodo } = this.props;
+
+        deleteTodo(id)
+    }
+
     render () {
-        const { completed, important, message } = this.props;
+        const { completed, favorite, message } = this.props;
 
         const styles = cx(Styles.task, {
             [Styles.completed]: completed,
@@ -44,13 +50,17 @@ export default class Task extends Component {
                 </div>
                 <div>
                     <Star
-                        checked = { important }
+                        checked = { favorite }
                         color1 = '#3B8EF3'
                         color2 = '#000'
                         onClick = { this.changePriority }
                     />
                     <Edit color1 = '#3B8EF3' color2 = '#000' />
-                    <Delete color1 = '#3B8EF3' color2 = '#000' />
+                    <Delete 
+                        color1 = '#3B8EF3' 
+                        color2 = '#000' 
+                        onClick = { this.deleteTodo }
+                    />
                 </div>
             </li>
         );
